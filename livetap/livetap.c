@@ -2,7 +2,6 @@
 #include <stdlib.h> // atoi
 
 
-//#include <unistd.h>
 int main(int argc, char *argv[]) {
 	
 	// Parse input arguments
@@ -33,6 +32,7 @@ int main(int argc, char *argv[]) {
 	printf("\nWaiting for packets...\n\n");
 	int i_pkt;
 	
+	// Switch packet processing function depending on type
 	switch (pkt_proc_type) {
 		case BEACON_PROC_TYPE:
 			for (i_pkt=0; i_pkt<n_pkts_rcv; i_pkt++){
@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
 
 
 void process_simple_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer) {
+	// Just a draft of string/hex dump. Idea is to modify and extract necessary bytes.
 	
 	// Print out header info
 	long int hdr_time = header->ts.tv_sec/1000000 + header->ts.tv_usec;
@@ -119,6 +120,8 @@ void process_simple_packet(u_char *args, const struct pcap_pkthdr *header, const
 
 /* libpcap library function for processing packages. */
 void process_beacon_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer) {
+	
+	// Designed for beacon extraction and timing evaluation.
 	
 	if (PRNT==1) {
 		printf("Arg in %s\n", args);
@@ -376,6 +379,8 @@ void scan_and_pick_ssid() {
 	//char str_comp[20] = "doesn't support"; Used this for comparing string from fgets, but the when failing to scan, fgets doesn't catch the terminal print...
 	fp = popen(scan_ssid, "r");
 	
+	// When device does not support scanning, terminal will print
+	// "Device does not support..." but str_scan_ssid will not catch it, hence comp to NULL
 	if (fgets(str_scan_ssid, 100, fp) == NULL) {
 		printf("Device cannot be used for scanning!!\n\n");		
 	}
