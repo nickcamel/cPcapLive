@@ -165,7 +165,7 @@ void process_beacon_packet(u_char *args, const struct pcap_pkthdr *header, const
 		ssid[len_ssid] = 0;	
 		
 		if (strcmp(ssid,NETWORK_SSID)!=0) {
-			printf("bad ssid\n");
+			printf("ssid mismatch\n");
 			return;			
 		}
 		
@@ -281,7 +281,7 @@ void process_beacon_packet(u_char *args, const struct pcap_pkthdr *header, const
 					t_gtod_delta, 
 					t_header_delta,
 					t_beacon_delta-t_gtod_delta,
-					t_beacon_delta-t_header_delta);					
+					t_beacon_delta-t_header_delta);
 				
 				if (PRNT==1) {
 					printf("Beacon %ld\nGTOD %ld\nPCAP %ld\n\n",
@@ -417,7 +417,11 @@ int setup_pcap_session() {
 		// It's all good. And we've updated the netmask
 	} else {
 		// We're not dealing with a physical interface. Interface is however based on a physical device.
-		// Oooor some other problems occured.
+		// Oooor some other problems occured.		
+		if (AUTOCHECK_NETMASK==1) {
+			// Means there was actually an error
+			printf("Err: %s\n", errbuf);
+		}
 		printf("\nDidn't get netmask. Default netmask set!\n");
 		dev_ipn = 0;
 		dev_netmask = DEF_NETMASK;	
