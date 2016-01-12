@@ -65,6 +65,9 @@ int main(int argc, char *argv[]) {
 void process_simple_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer) {
 	// Just a draft of string/hex dump. Idea is to modify and extract necessary bytes.
 	
+	int linktype = pcap_datalink(hdl_pcap);
+	printf("\nLink Type: %d (goto: http://www.tcpdump.org/linktypes.html) \n", linktype);
+	
 	// Print out header info
 	long int hdr_time = header->ts.tv_sec/1000000 + header->ts.tv_usec;
 	unsigned int caplen = header->caplen;
