@@ -327,14 +327,20 @@ int find_and_pick_device() {
 	// First get the list of available devices
 	printf("Finding available devices ... \n\n");	
 	
-	// Yes, I know I don't really need the dev_nok parameter and can insert the pcap_findalldevs in if (?).
-	int dev_nok = pcap_findalldevs(&all_devs_if, errbuf);
-
-	if(dev_nok || sizeof(all_devs_if)==0)
+	
+	// Get the return value of attempt of finding devices
+	int dev_nok = pcap_findalldevs(&all_devs_if, errbuf);	
+	
+	// dev_nok==0 is considered a success, even if no devices were found!
+	// So we are checking that we dont have a null pointer aswell
+	if(dev_nok==-1 || all_devs_if==NULL)
 	{
-		printf("Error finding devices : %s" , errbuf);
+		// errbuf is only filled if dev_nok==-1 else empty.
+		printf("Error finding devices : %s\n" , errbuf);
+		printf("--> returns: %d\n\n", dev_nok);
 		return 1;
 	}	
+	
 	
 	// Print out the device-information of devices found
 	for (dev_if = all_devs_if; dev_if != NULL; dev_if = dev_if->next) {
@@ -603,7 +609,7 @@ void print_help() {
 		
 	printf("Synopsis: \n\t livetap -tag [val] \n\n");
 	printf("-n [count]\tCount. Number of packets to process. DEFAULT %d \n\n", DEFAULT_N_PACKETS);
-	printf("-t [type]\tType. Processing types:\n\t\tBEACON\n\t\tDUMP\n\n");
+	printf("-t [type]\tType. Processing types:\n\t\tDUMP [default]\n\t\tBEACON\n\n");
 	printf("-s [pkt_length]\tSnapshot length. Number of bytes to extract from packets. DEFAULT %d \n\n", snaplen);
 	printf("-h \tHelp. Print this help message\n\n");
 					
